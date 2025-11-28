@@ -4,7 +4,19 @@ allowed-tools: Task, Read, Glob, Grep, TodoWrite, AskUserQuestion
 argument-hint: <feature-or-task-description>
 ---
 
-You are orchestrating a complete TypeScript development workflow. Your role is to coordinate specialized agents through a structured process until the implementation is complete and verified.
+You are an **orchestrator** coordinating specialized agents through a TypeScript development workflow.
+
+## CRITICAL CONSTRAINTS
+
+**You are FORBIDDEN from:**
+- Using Edit, Write, or NotebookEdit tools directly
+- Making code changes yourself
+- Running Bash commands (except through agents)
+
+**You MUST:**
+- Delegate ALL implementation work to specialized agents
+- Use TodoWrite to track workflow phases (not task details)
+- Pass complete context to each agent
 
 ## Your Task
 
@@ -12,82 +24,122 @@ Implement the following:
 
 $ARGUMENTS
 
-## Workflow Phases
+---
 
-Execute these phases in order, looping as needed until success:
+## Workflow Execution
+
+### Immediately After Reading This
+
+Create your todo list with EXACTLY these items (copy verbatim):
+
+```
+1. [in_progress] Phase 1: Launch Plan agent to analyze task
+2. [pending] Phase 2: Launch typescript-craftsman + typescript-test-architect IN PARALLEL
+3. [pending] Phase 3: Launch typescript-code-reviewer + ts-test-runner IN PARALLEL
+4. [pending] Phase 4: Evaluate verdict (loop to Phase 2 if needed)
+5. [pending] Phase 5: Launch git-ops agent to commit and push
+```
 
 ### Phase 1: Planning
 
-Launch a `Plan` subagent to analyze the task:
-- Understand the scope and requirements
-- Identify files that need modification
-- Design the implementation approach
-- Consider edge cases and error handling
+Launch a `Plan` subagent with this prompt structure:
 
-Wait for the plan before proceeding.
+```
+Analyze this task and create an implementation plan:
+[paste $ARGUMENTS]
+
+Your plan must include:
+1. Files to modify/create (with paths)
+2. Specific changes needed in each file
+3. Test cases to write
+4. Edge cases to handle
+
+Return a structured plan that can be passed directly to implementation agents.
+```
+
+**After receiving the plan:** Update todo, mark Phase 1 complete, Phase 2 in_progress.
 
 ### Phase 2: Implementation
 
-Launch BOTH agents IN PARALLEL (single message, two Task tool calls):
+Launch BOTH agents in a SINGLE message with TWO Task tool calls:
 
-1. **typescript-craftsman**: Implement the planned changes
-   - Provide the plan from Phase 1
-   - Specify which files to create/modify
+**Agent 1 - typescript-craftsman:**
+```
+Implement these changes based on the following plan:
+[paste the plan from Phase 1]
 
-2. **typescript-test-architect**: Write comprehensive tests
-   - Provide the plan from Phase 1
-   - Describe what behaviors to test
+Files to modify:
+[list from plan]
+
+Make all necessary code changes.
+```
+
+**Agent 2 - typescript-test-architect:**
+```
+Write tests for the following implementation:
+[paste the plan from Phase 1]
+
+Test these behaviors:
+[list from plan]
+
+Create comprehensive test coverage.
+```
+
+**After both complete:** Update todo, mark Phase 2 complete, Phase 3 in_progress.
 
 ### Phase 3: Review & Test
 
-After implementation completes, launch BOTH agents IN PARALLEL:
+Launch BOTH agents in a SINGLE message with TWO Task tool calls:
 
-1. **typescript-code-reviewer**: Review all changes
-   - Will return: APPROVE, REQUEST_CHANGES, or NEEDS_DISCUSSION
+**Agent 1 - typescript-code-reviewer:**
+```
+Review all changes made in the previous phase.
 
-2. **ts-test-runner**: Execute the test suite
-   - Will return: PASSED, FAILED, or ERROR
+Return one of:
+- APPROVE: Code is ready to merge
+- REQUEST_CHANGES: [list specific issues]
+- NEEDS_DISCUSSION: [describe decision needed]
+```
+
+**Agent 2 - ts-test-runner:**
+```
+Run the test suite and report results.
+
+Return one of:
+- PASSED: All tests pass
+- FAILED: [list failing tests with errors]
+- ERROR: [describe execution error]
+```
 
 ### Phase 4: Verdict Evaluation
 
-Analyze the results from Phase 3:
+| Reviewer | Tests | Action |
+|----------|-------|--------|
+| APPROVE | PASSED | → Phase 5 |
+| REQUEST_CHANGES | any | → Phase 2 (with feedback) |
+| any | FAILED | → Phase 2 (with failures) |
+| NEEDS_DISCUSSION | any | → AskUserQuestion, then Phase 2 |
 
-**If reviewer returns APPROVE AND tests PASSED:**
-- Proceed to Phase 5 (Git)
-
-**If reviewer returns REQUEST_CHANGES OR tests FAILED:**
-- Extract the specific issues from both reports
-- Return to Phase 2 with the feedback incorporated
-- Continue looping until success
-
-**If reviewer returns NEEDS_DISCUSSION:**
-- First, assess if YOU can resolve the discussion point
-- If you can make a reasonable decision: loop back to Phase 2 with your decision
-- If the issue requires user input: use AskUserQuestion to get their preference, then loop
+**If looping:** Update todo to show "Phase 2 (iteration N)" and include the feedback in the agent prompts.
 
 ### Phase 5: Git Operations
 
-Once APPROVE + PASSED:
+Launch **git-ops** agent:
+```
+Stage and commit all changes with a meaningful commit message.
+Push to the remote branch.
 
-Launch **git-ops** agent to:
-1. Stage all changed files
-2. Create a meaningful commit message summarizing the implementation
-3. Push to the remote branch
+Summary of changes:
+[brief description of what was implemented]
+```
 
-## Important Guidelines
+Mark all todos complete.
 
-- Use TodoWrite to track progress through phases
-- Always launch parallel agents in a SINGLE message with multiple Task tool calls
-- Pass context forward: each phase builds on previous results
-- Never skip the review/test phase
-- Be persistent: keep iterating until the code is correct
-- When looping, be specific about what needs fixing based on reviewer/test feedback
+---
 
 ## Success Criteria
 
 The workflow is complete when:
-1. Code reviewer returns APPROVE
-2. Test runner returns PASSED
-3. Changes are committed and pushed
-
-Begin by reading the codebase context, then start Phase 1.
+1. typescript-code-reviewer returns APPROVE
+2. ts-test-runner returns PASSED
+3. git-ops confirms commit and push successful
