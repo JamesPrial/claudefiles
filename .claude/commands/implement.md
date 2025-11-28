@@ -32,7 +32,7 @@ You are the ORCHESTRATOR. Your job is to **distill and route information**—not
 **Agent context rules:**
 | Agent | Needs | Does NOT need |
 |-------|-------|---------------|
-| Plan | Task description, relevant file paths | Previous conversation history |
+| Plan (any perspective) | Task description, perspective focus/questions | Other perspectives' output, previous iteration history |
 | typescript-craftsman | Plan summary, files to modify, specific feedback | Full reviewer output, test logs |
 | typescript-test-architect | Behaviors to test, file locations | Implementation details, reviewer comments |
 | typescript-code-reviewer | Files changed, summary of what was done | Full plan, test output |
@@ -59,48 +59,121 @@ $ARGUMENTS
 Create your todo list with EXACTLY these items:
 
 ```
-1. [in_progress] Phase 1: Decomposition planning
-2. [pending] Phase 2: Parallel implementation
-3. [pending] Phase 3: Parallel review + test
-4. [pending] Phase 4: Unit-level verdict
-5. [pending] Phase 5: Final integration review
-6. [pending] Phase 6: Git operations
+1. [in_progress] Phase 1A: Multi-perspective analysis
+2. [pending] Phase 1B: Plan synthesis
+3. [pending] Phase 2: Parallel implementation
+4. [pending] Phase 3: Parallel review + test
+5. [pending] Phase 4: Unit-level verdict
+6. [pending] Phase 5: Final integration review
+7. [pending] Phase 6: Git operations
 ```
 
 ---
 
-## Phase 1: Decomposition Planning
+## Phase 1A: Multi-Perspective Analysis
 
-Launch a `Plan` subagent:
+First, classify the task and select 2-5 perspectives based on scope:
 
+**Task classification heuristics:**
+- Contains "fix", "bug", "broken" → Bug fix
+- Contains "add", "implement", "create" → New feature
+- Contains "refactor", "clean up", "reorganize" → Refactoring
+- Contains "slow", "optimize", "performance" → Performance
+- Contains "auth", "security", "permission" → Security-related
+- Contains "API", "endpoint", "interface" → API changes
+
+**Scaling heuristic:**
+- 2 perspectives: Focused change, clear approach, just need sanity check
+- 3 perspectives: Standard feature/fix, moderate complexity
+- 4 perspectives: Cross-cutting concerns, multiple subsystems
+- 5 perspectives: Large feature, architectural impact, high risk
+
+**Perspective catalog (pick what fits):**
+| Perspective | Focus | Key Questions |
+|-------------|-------|---------------|
+| Security-First | Attack surface, validation, auth | What could go wrong? Blast radius? |
+| Maintainability | Patterns, readability, extensibility | Will this make sense in 6 months? |
+| MVP/Pragmatist | Minimum viable, ship fast | Smallest change that works? |
+| Root Cause | Why did this happen? | What's the actual bug? |
+| Prevention | How to prevent recurrence | What guardrails needed? |
+| Testing Coverage | How to verify the fix | What tests prove correctness? |
+| Clean Architecture | Ideal structure | How should this be organized? |
+| Migration Safety | Safe transition | How to change without breaking? |
+| Performance | Speed, memory, efficiency | Where are the bottlenecks? |
+| User Experience | End-user impact | How does this feel to use? |
+| Backwards Compat | Existing integrations | What might break? |
+
+Then launch **2-5 Plan agents in a single message** with dynamically-chosen perspectives.
+
+### Agent Prompt Template
 ```
-Analyze this task and create an implementation plan:
+Analyze this task from a [PERSPECTIVE_NAME] perspective:
 [paste $ARGUMENTS]
 
-Your output MUST be in one of two formats:
+Your focus: [perspective focus from catalog]
+Key questions to answer: [perspective questions from catalog]
 
-FORMAT A - SIMPLE MODE (single work unit):
-MODE: SIMPLE
-Reason: [why this doesn't need decomposition]
-Files: [list]
-Behaviors to test: [list]
-Changes needed: [description]
+Output format:
+PERSPECTIVE: [name]
+KEY INSIGHTS: [3-5 bullet points]
+REQUIREMENTS: [what the implementation MUST include from this perspective]
+WARNINGS: [what to avoid or watch out for]
+FILES TO EXAMINE: [list with rationale]
+CONFIDENCE: HIGH | MEDIUM | LOW (in your recommendations)
+```
 
-FORMAT B - PARALLEL MODE (multiple work units):
-MODE: PARALLEL
+**After all perspective agents return:** Update todo, mark Phase 1A complete, Phase 1B in_progress.
+
+---
+
+## Phase 1B: Plan Synthesis
+
+Synthesize all perspective outputs into a unified plan.
+
+### Synthesis Process
+
+1. **Collect all FILES TO EXAMINE** from all perspectives → Read them if not already read
+
+2. **Identify conflicts** where perspectives disagree:
+   - Different files recommended
+   - Contradictory approaches
+   - Scope disagreements
+
+3. **Resolve conflicts using judgment:**
+   - If one perspective has HIGH confidence and others LOW → favor the HIGH
+   - If conflict is about scope → favor the more conservative option
+   - If conflict is about approach and both valid → use AskUserQuestion
+
+4. **Use AskUserQuestion ONLY when:**
+   - Two perspectives have HIGH confidence on contradictory approaches
+   - The choice significantly affects implementation time or complexity
+   - The user's preference isn't inferrable from context
+
+### Unified Plan Output Format
+
+```
+SYNTHESIZED PLAN:
+
+Perspectives used: [list]
+
+Agreements (all perspectives aligned):
+- [bullet points]
+
+Resolved conflicts:
+- [conflict]: chose [approach] because [reason]
+
+[If user input was needed:]
+User decisions:
+- [question]: [their answer]
 
 WORK UNITS:
 WU-1: [description]
   Files: [list]
   Behaviors to test: [list]
-  Dependencies: [] or [WU-X, ...]
-
-WU-2: [description]
-  Files: [list]
-  Behaviors to test: [list]
+  Perspective notes: [relevant insights from perspectives]
   Dependencies: []
 
-[...more units as needed]
+[...more units]
 
 EXECUTION WAVES:
   Wave 1: [WU-1, WU-2, ...] (all independent)
@@ -108,13 +181,9 @@ EXECUTION WAVES:
 
 REVIEWER GROUPINGS:
   R-1: [WU-1, WU-2] - rationale: [why grouped]
-  R-2: [WU-3] - rationale: [why grouped]
-
-Use SIMPLE mode for: single file changes, bug fixes, small refactors
-Use PARALLEL mode for: multiple independent changes, features spanning multiple files
 ```
 
-**After receiving the plan:** Update todo, mark Phase 1 complete, Phase 2 in_progress.
+**After synthesis:** Update todo, mark Phase 1B complete, Phase 2 in_progress.
 
 ---
 
@@ -344,3 +413,6 @@ The workflow is complete when ALL are true:
 5. **Don't split tightly coupled units across reviewers**
 6. **Don't let test-architect see implementation first** - always launch together
 7. **Don't ignore test review** - reward hacking is a real failure mode
+8. **Don't skip synthesis** - raw perspective outputs need conflict resolution
+9. **Don't let one perspective dominate** - synthesis requires trade-offs
+10. **Don't ask user about every conflict** - use judgment, only escalate when truly ambiguous
