@@ -1,6 +1,6 @@
 ---
 description: Full development workflow - plan, implement, test, review, iterate until success, then commit+push
-allowed-tools: Task, Read, Glob, Grep, TodoWrite, AskUserQuestion
+allowed-tools: Task, Read, Glob, Grep, TodoWrite, AskUserQuestion, Write
 argument-hint: <feature-or-task-description>
 ---
 
@@ -59,14 +59,32 @@ $ARGUMENTS
 Create your todo list with EXACTLY these items:
 
 ```
-1. [in_progress] Phase 1A: Multi-perspective analysis
-2. [pending] Phase 1B: Plan synthesis
-3. [pending] Phase 2: Parallel implementation
-4. [pending] Phase 3: Parallel review + test
-5. [pending] Phase 4: Unit-level verdict
-6. [pending] Phase 5: Final integration review
-7. [pending] Phase 6: Git operations
+1. [in_progress] Phase 0: Codebase exploration
+2. [pending] Phase 1A: Multi-perspective analysis
+3. [pending] Phase 1B: Plan synthesis
+4. [pending] Phase 2: Parallel implementation
+5. [pending] Phase 3: Parallel review + test
+6. [pending] Phase 4: Unit-level verdict
+7. [pending] Phase 5: Final integration review
+8. [pending] Phase 6: Git operations
 ```
+
+---
+
+## Phase 0: Codebase Exploration
+
+Before analyzing from perspectives, understand the existing code:
+
+1. Launch **1-2 Explore agents** to understand:
+   - Existing patterns relevant to the task
+   - Files that will need modification
+   - Dependencies and integration points
+
+2. **If plan mode is active** (you'll see a system-reminder about plan mode):
+   - Write exploration findings to the plan file specified in the system reminder
+   - This helps document your understanding before proceeding
+
+**After exploration:** Update todo, mark Phase 0 complete, Phase 1A in_progress.
 
 ---
 
@@ -184,6 +202,16 @@ REVIEWER GROUPINGS:
 ```
 
 **After synthesis:** Update todo, mark Phase 1B complete, Phase 2 in_progress.
+
+### Plan Mode Gate
+
+**If plan mode is active:**
+1. Write the SYNTHESIZED PLAN to the plan file (specified in system reminder)
+2. Call ExitPlanMode tool
+3. STOP - do not proceed to Phase 2 until user approves and re-runs
+
+**If plan mode is NOT active:**
+- Continue directly to Phase 2
 
 ---
 
