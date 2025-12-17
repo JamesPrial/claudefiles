@@ -1,0 +1,19 @@
+{
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "matcher": "Write",
+      "script": "./scripts/go-fmt.sh"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "Edit",
+      "script": "./scripts/go-vet.sh"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "script": "./scripts/go-precommit.sh"
+    }
+  ]
+}

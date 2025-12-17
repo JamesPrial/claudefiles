@@ -1,0 +1,11 @@
+{
+  "name": "golang-workflow",
+  "version": "0.1.0",
+  "description": "Go development workflow with generic agents optimized via skills and automated hooks for formatting, vetting, and linting",
+  "author": {
+    "name": "James Prial"
+  },
+  "license": "MIT",
+  "keywords": ["golang", "go", "development", "workflow", "testing", "linting"],
+  "hooks": "./hooks/hooks.json"
+}
