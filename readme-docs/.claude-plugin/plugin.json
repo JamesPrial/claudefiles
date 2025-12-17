@@ -1,0 +1,10 @@
+{
+  "name": "readme-docs",
+  "version": "0.1.0",
+  "description": "Automated repository documentation generator that creates AI-generated README overviews, structure summaries, and usage guides for your codebase",
+  "author": {
+    "name": "James Prial"
+  },
+  "license": "MIT",
+  "keywords": ["readme", "documentation", "repository", "overview", "generator", "ai-docs"]
+}
