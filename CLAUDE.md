@@ -22,15 +22,15 @@ Use TodoWrite for progress. Use AskUserQuestion when requirements are unclear.
 ## Structure
 
 ```
-agents/           # TypeScript agents
-commands/         # Slash commands
-golang-workflow/  # Go plugin (agents, commands, hooks, skills)
-readme-docs/      # Documentation plugin
+agents/           # All agents by language (typescript/, golang/, docs/)
+commands/         # All commands by language
+hooks/            # Automated scripts (golang/)
+skills/           # Reference knowledge (golang/)
 ```
 
-## Plugin Format
+## Component Organization
 
-`.claude-plugin/plugin.json` + `agents/` + `commands/` + optional `skills/`, `hooks/`
+This repository is organized by component type (agents, commands, hooks, skills) rather than by plugin. Components are grouped by language or domain within each directory.
 
 ## Key Constraints
 

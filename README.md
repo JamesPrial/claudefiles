@@ -18,25 +18,65 @@ This repository contains Claude Code configuration files, agents, commands, and 
 
 ### Structure
 
-- **agents/**: TypeScript-focused development agents
-  - `quick-impl.md`: Fast implementation agent
-  - `ts-test-runner.md`: TypeScript test execution agent
-  - `typescript-code-reviewer.md`: Code review agent for TypeScript
-  - `typescript-craftsman.md`: TypeScript implementation specialist
-  - `typescript-test-architect.md`: Test design and architecture agent
+The repository now follows a component-first organization:
 
-- **commands/**: Custom slash commands
-  - `implement.md`: Implementation command workflow
+```
+claudefiles/
+├── agents/
+│   ├── typescript/  (5 agents)
+│   │   ├── quick-impl.md
+│   │   ├── ts-test-runner.md
+│   │   ├── typescript-code-reviewer.md
+│   │   ├── typescript-craftsman.md
+│   │   └── typescript-test-architect.md
+│   ├── golang/      (5 agents)
+│   │   ├── go-architect.md
+│   │   ├── go-explorer.md
+│   │   ├── go-implementer.md
+│   │   ├── go-optimizer.md
+│   │   └── go-reviewer.md
+│   └── docs/        (1 agent)
+│       └── readme-commit-agent.md
+├── commands/
+│   ├── typescript/  (1 command)
+│   │   └── implement.md
+│   ├── golang/      (1 command)
+│   │   └── go-workflow.md
+│   └── docs/        (1 command)
+│       └── readme-docs-commit.md
+├── hooks/
+│   └── golang/      (hooks.json + 3 scripts)
+│       ├── hooks.json
+│       ├── go-fmt-on-save.sh
+│       ├── go-vet-on-save.sh
+│       └── go-test-on-commit.sh
+└── skills/
+    └── golang/      (6 categories, nested SKILL.md)
+        ├── testing/
+        ├── error-handling/
+        ├── interfaces/
+        ├── nil-handling/
+        ├── concurrency/
+        └── context/
+```
 
-- **golang-workflow/**: Complete Go development plugin
-  - **agents/**: Go-specific agents (architect, explorer, implementer, optimizer, reviewer)
-  - **commands/**: Go workflow commands
-  - **skills/**: Organized Go best practices and patterns
-    - Testing (table tests, subtests, benchmarks, helpers)
-    - Error handling (wrapping, checking, sentinel errors)
-    - Interfaces (design, embedding, avoiding pollution)
-    - Nil handling (pointers, maps, slices, interfaces)
-    - Concurrency (goroutines, channels, context, sync primitives)
+#### Components
+
+- **agents/**: Development agents organized by language/domain
+  - **typescript/**: TypeScript implementation, testing, and review agents
+  - **golang/**: Go architecture, exploration, implementation, optimization, and review agents
+  - **docs/**: Documentation-focused agents
+
+- **commands/**: Custom slash commands for workflow automation
+  - **typescript/**: TypeScript implementation workflows
+  - **golang/**: Go development workflows
+  - **docs/**: Documentation commit workflows
+
+- **hooks/**: Event-driven automation scripts
+  - **golang/**: Go-specific hooks for formatting, vetting, and testing
+
+- **skills/**: Best practices and patterns organized by language
+  - **golang/**: Comprehensive Go patterns including testing, error handling, interfaces, nil handling, concurrency, and context management
 
 ### Usage
 
