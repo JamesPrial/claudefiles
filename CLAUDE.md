@@ -35,5 +35,6 @@ This repository is organized by component type (agents, commands, hooks, skills)
 ## Key Constraints
 
 - **TypeScript**: Launch implementer + test-writer TOGETHER (prevents reward hacking)
+- **Python**: Use `python-code-writer` for writing/refactoring, `python-code-pedant` for rigorous review, `python-test-runner` for testing
 - **Go**: Hooks auto-run `go fmt`/`go vet` on file changes
 - **Git ops**: Require APPROVE + tests PASSED
