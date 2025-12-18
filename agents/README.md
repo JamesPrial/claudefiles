@@ -13,14 +13,16 @@ This structure allows Claude Code to tackle complex tasks efficiently by delegat
 
 ## Cross-Language Comparison
 
-| Role | TypeScript | Go | Documentation |
-|------|------------|----|--------------|
-| **Exploration** | - | explorer | - |
-| **Architecture** | - | architect | docs-architect |
-| **Implementation** | craftsman, quick-impl | implementer | - |
-| **Review** | code-reviewer | reviewer | - |
-| **Testing** | test-architect, test-runner | - | - |
-| **Optimization** | - | optimizer | - |
+| Role | TypeScript | Go | Python | General |
+|------|------------|----|---------| --------|
+| **Exploration** | - | explorer | - | gh-codebase-researcher |
+| **Architecture** | - | architect | slash-command-architect | skill-decomposer |
+| **Implementation** | craftsman, quick-impl | implementer | code-writer | - |
+| **Review** | code-reviewer | reviewer | code-pedant | - |
+| **Testing** | test-architect, test-runner | - | test-runner | - |
+| **Optimization** | - | optimizer | - | - |
+| **Git/GitHub** | - | - | - | git-ops, github-cli |
+| **Web/Research** | - | - | - | web-search, web-fact-gatherer |
 
 ## Available Agents
 
@@ -43,6 +45,22 @@ This structure allows Claude Code to tackle complex tasks efficiently by delegat
 ### Documentation (`docs/`)
 
 - **docs-architect** - Structures and creates comprehensive documentation
+
+### Python (`python/`)
+
+- **code-writer** - Clean, simple Python implementation following PEP 8 and Zen of Python
+- **code-pedant** - Rigorous code review focused on type safety and eliminating AI sloppiness
+- **test-runner** - Executes Python tests and reports only failures and errors
+- **slash-command-architect** - Designs type-safe Python scripts for Claude Code slash commands
+
+### General Utilities (`general/`)
+
+- **git-ops** - Git operations specialist for commits, branches, and repo management
+- **github-cli** - GitHub CLI operations for PRs, issues, and repository tasks
+- **web-search** - Web search for factual information and documentation
+- **web-fact-gatherer** - Gathers structured data from web sources as JSON
+- **gh-codebase-researcher** - Researches open-source implementations via GitHub
+- **skill-decomposer** - Decomposes complex skills into efficient, layered components
 
 ## Usage
 

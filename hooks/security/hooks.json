@@ -1,0 +1,10 @@
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "script": "./scripts/check-secrets.py",
+      "timeout": 30
+    }
+  ]
+}
