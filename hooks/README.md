@@ -115,6 +115,21 @@ Bash(command="git commit -m 'Add feature'")
 }
 ```
 
+### Security Hooks
+
+The `security/` directory contains pre-commit security scanning:
+
+#### **`scripts/check-secrets.py`**
+- **Trigger**: Before `Bash` tool use (when command contains "git commit")
+- **Purpose**: Detect hardcoded secrets, credentials, and API keys before committing
+- **Behavior**:
+  - Scans staged files for AWS keys, API tokens, private keys, database URLs
+  - Detects hardcoded values from `.env` files in source code
+  - Blocks commit if secrets found (exit 2)
+  - Fail-closed: errors also block commit for safety
+
+See `security/README.md` for full documentation of detection patterns and configuration.
+
 ## Hook Script Structure
 
 All hooks follow a consistent pattern:

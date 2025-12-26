@@ -12,72 +12,47 @@ i have no idea which one's the best, and im gonna have to resolve naming collisi
 
 ---
 
-## What's Here (AI-generated summary)
+## What's Here
 
-This repository contains Claude Code configuration files, agents, commands, and skills for software development workflows.
+Claude Code configuration files: agents, commands, hooks, and skills for software development workflows.
 
 ### Structure
-
-The repository now follows a component-first organization:
 
 ```
 claudefiles/
 ├── agents/
-│   ├── typescript/  (5 agents)
-│   │   ├── quick-impl.md
-│   │   ├── ts-test-runner.md
-│   │   ├── typescript-code-reviewer.md
-│   │   ├── typescript-craftsman.md
-│   │   └── typescript-test-architect.md
-│   ├── golang/      (5 agents)
-│   │   ├── go-architect.md
-│   │   ├── go-explorer.md
-│   │   ├── go-implementer.md
-│   │   ├── go-optimizer.md
-│   │   └── go-reviewer.md
-│   └── docs/        (1 agent)
-│       └── readme-commit-agent.md
+│   ├── general/     (6 agents: git-ops, github-cli, web-search, etc.)
+│   ├── golang/      (5 agents: architect, explorer, implementer, optimizer, reviewer)
+│   ├── python/      (4 agents: code-writer, code-pedant, test-runner, slash-command-architect)
+│   ├── typescript/  (5 agents: craftsman, code-reviewer, test-architect, test-runner, quick-impl)
+│   └── docs/        (1 agent: docs-architect)
 ├── commands/
-│   ├── typescript/  (1 command)
-│   │   └── implement.md
-│   ├── golang/      (1 command)
-│   │   └── go-workflow.md
-│   └── docs/        (1 command)
-│       └── readme-docs-commit.md
+│   ├── docs/        (generate-overview.md)
+│   ├── golang/      (implement.md)
+│   └── typescript/  (implement.md)
 ├── hooks/
-│   └── golang/      (hooks.json + 3 scripts)
-│       ├── hooks.json
-│       ├── go-fmt-on-save.sh
-│       ├── go-vet-on-save.sh
-│       └── go-test-on-commit.sh
+│   ├── golang/      (go-fmt.sh, go-vet.sh, go-precommit.sh)
+│   └── security/    (check-secrets.py)
 └── skills/
-    └── golang/      (6 categories, nested SKILL.md)
-        ├── testing/
-        ├── error-handling/
-        ├── interfaces/
-        ├── nil-handling/
-        ├── concurrency/
-        └── context/
+    └── golang/      (6 categories with nested sub-skills)
+        ├── concurrency/   (channels, context, goroutines, sync)
+        ├── errors/        (checking, sentinel, wrapping)
+        ├── interfaces/    (design, embedding, pollution)
+        ├── linting/       (golangci, staticcheck, vet)
+        ├── nil/           (interface, map, pointer, slice)
+        └── testing/       (benchmarks, helpers, subtests, table)
 ```
 
-#### Components
+### Components
 
-- **agents/**: Development agents organized by language/domain
-  - **typescript/**: TypeScript implementation, testing, and review agents
-  - **golang/**: Go architecture, exploration, implementation, optimization, and review agents
-  - **docs/**: Documentation-focused agents
+- **agents/**: Specialized AI assistants by language/domain. `general/` contains cross-language utilities (git, GitHub, web search). Language dirs contain implementation, review, and testing agents.
 
-- **commands/**: Custom slash commands for workflow automation
-  - **typescript/**: TypeScript implementation workflows
-  - **golang/**: Go development workflows
-  - **docs/**: Documentation commit workflows
+- **commands/**: Slash commands for workflow automation (`/golang/implement`, `/typescript/implement`, `/docs/generate-overview`)
 
-- **hooks/**: Event-driven automation scripts
-  - **golang/**: Go-specific hooks for formatting, vetting, and testing
+- **hooks/**: Event-driven scripts that auto-run on tool use. `golang/` runs `go fmt`/`go vet` on file changes. `security/` scans for leaked secrets.
 
-- **skills/**: Best practices and patterns organized by language
-  - **golang/**: Comprehensive Go patterns including testing, error handling, interfaces, nil handling, concurrency, and context management
+- **skills/**: Reference knowledge as nested SKILL.md files. Currently Go patterns only.
 
 ### Usage
 
-These files are meant to be used with Claude Code's agent, command, and skill systems. They can be placed in project-level `.claude/` directories or at the user level for global access.
+Copy to `.claude/` at project or user level. See `CLAUDE.md` for the recommended parallel wave workflow.
