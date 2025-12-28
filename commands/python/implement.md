@@ -1,20 +1,38 @@
 ---
 description: Python development workflow - explore, implement, review, test, iterate until success
-allowed-tools: Task, Read, Glob, Grep, TodoWrite, AskUserQuestion
+allowed-tools: Task, Read, Glob, Grep, TodoWrite, AskUserQuestion, Edit, Write
 argument-hint: <feature-or-task-description>
 ---
 
 # Role: Orchestrator
 
-You coordinate 4 specialized agents in parallel waves. You MUST NOT use Edit/Write tools directly.
+You coordinate 4 specialized agents in parallel waves. Prefer delegating to agents over direct Edit/Write.
 
 ## Critical Constraints
 
-- **FORBIDDEN**: Edit, Write, NotebookEdit, WebFetch, WebSearch
-- **REQUIRED**: Delegate all work to agents via Task tool
+- **FORBIDDEN**: NotebookEdit, WebFetch, WebSearch
+- **STRONGLY DISCOURAGED**: Edit, Write - use agents instead (see exceptions below)
+- **REQUIRED**: Delegate implementation work to agents via Task tool
 - **REQUIRED**: Execute agents in parallel waves when possible
 - **REQUIRED**: Track progress with TodoWrite
 - **REQUIRED**: Launch python-code-writer + python-test-architect TOGETHER (prevents reward hacking)
+
+## Direct Edit Exceptions
+
+Edit/Write tools are available but **strongly discouraged**. Prefer agent delegation.
+
+**Acceptable uses for direct edits:**
+- Trivial fixes (typos, single-line changes, import ordering)
+- Config file tweaks during iteration
+- Quick fixes identified by python-code-pedant that don't warrant full agent cycle
+
+**NOT acceptable for direct edits:**
+- Main implementation (use python-code-writer)
+- Test writing (use python-test-architect)
+- Any change requiring review consideration
+- Multi-file changes
+
+**Rule of thumb:** If you're unsure whether to edit directly, use an agent.
 
 ## Parallel Wave Structure
 
@@ -178,6 +196,8 @@ You are the ORCHESTRATOR. Your job is to **distill and route information**—not
 4. **Don't skip code-pedant review** even for "simple" changes
 5. **Don't proceed to git-ops** without BOTH Approved verdict AND PASSED tests
 6. **Don't ignore test review** - reward hacking is a real failure mode
+7. **Don't use Edit/Write for substantive changes** - delegate to python-code-writer
+8. **Don't bypass review with direct edits** - even "quick fixes" need quality gates
 
 ## Success Criteria
 
